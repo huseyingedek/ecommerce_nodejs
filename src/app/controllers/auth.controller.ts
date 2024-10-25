@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import AuthService from '../services/auth.services';
 import { registerSchema, loginSchema } from '../validations/auth.validator';
 
-class UserController {
+class AuthController {
     public async register(req: Request, res: Response): Promise<void> {
         const { name, lastName, email, password, phone, address } = req.body;
 
@@ -14,9 +14,9 @@ class UserController {
 
         try {
             const newUser = await AuthService.register(name, lastName, email, password, phone, address);
-            res.status(201).json(newUser);
+            res.status(201).json({ message: 'User registered successfully', user: newUser });
         } catch (error) {
-            res.status(500).json( error instanceof Error ? { message: error.message } : { message: 'Unknown error' });
+            res.status(500).json(error instanceof Error ? { message: error.message } : { message: 'Unknown error' });
         }
     }
 
@@ -32,9 +32,9 @@ class UserController {
         try {
             const isValid = await AuthService.validateUser(email, password);
             if (isValid) {
-                const { accessToken, refreshToken, accessTokenExpiresAt } = isValid;
+                const { accessToken, refreshToken, accessTokenExpiresAt, user } = isValid;
 
-                res.status(200).json({ message: 'Login successful', accessToken, refreshToken, accessTokenExpiresAt });
+                res.status(200).json({ message: 'Login successful', accessToken, refreshToken, accessTokenExpiresAt, user });
             } else {
                 res.status(401).json({ message: 'Invalid credentials' });
             }
@@ -67,6 +67,26 @@ class UserController {
             res.status(500).json({ message: 'Server error', error });
         }
     }
+
+    public async check(req: Request, res: Response): Promise<void> {
+        const { token } = req.body;
+
+        if (!token) {
+            res.status(400).json({ message: 'Token is required' });
+            return;
+        }
+
+        try {
+            const user = await AuthService.checkToken(token);
+            if (!user) {
+                res.status(401).json({ message: 'Invalid or expired token' });
+                return;
+            }
+            res.status(200).json({ user });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
+    }
 }
 
-export default new UserController();
+export default new AuthController();

@@ -66,12 +66,10 @@ export const registerSchema = Joi.object({
     address: Joi.string()
         .min(3)
         .max(50)
-        .required()
         .messages({
-            'string.base': 'adress must be a string',
-            'string.empty': 'adress is required',
-            'string.min': 'adress must be at least 3 characters long',
-            'string.max': 'adress must be less than 50 characters long',
+            'string.base': 'address must be a string',
+            'string.min': 'address must be at least 3 characters long',
+            'string.max': 'address must be less than 50 characters long',
         }),
 });
 

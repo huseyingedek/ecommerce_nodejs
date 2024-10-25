@@ -36,7 +36,8 @@ const UserSchema: Schema = new Schema<IUser>({
     required: true,
   },
   address: { 
-    type: String 
+    type: String,
+    required: false,
   },
 }, { timestamps: true });
 
