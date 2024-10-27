@@ -8,8 +8,8 @@ class AuthService {
         return await UserModel.findOne({ email }).exec();
     }
 
-    public async register(name: string, lastName: string, email: string, password: string, phone: string, address: string): Promise<IUser> {
-        const newUser: IUser = { name, lastName, email, password, phone, address } as IUser;
+    public async register(name: string, lastName: string, email: string, password: string, phone: string, address: string, role: string): Promise<IUser> {
+        const newUser: IUser = { name, lastName, email, password, phone, address, role } as IUser;
         const existingUser = await UserModel.findOne({ $or: [{ email }, { phone }] });
 
         if (existingUser) {

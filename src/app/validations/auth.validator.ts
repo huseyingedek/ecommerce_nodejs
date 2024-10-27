@@ -71,6 +71,12 @@ export const registerSchema = Joi.object({
             'string.min': 'address must be at least 3 characters long',
             'string.max': 'address must be less than 50 characters long',
         }),
+        role: Joi.string()
+        .valid('user', 'admin')
+        .messages({
+            'string.base': 'role must be a string',
+            'string.valid': 'role must be either user or admin',
+        }),
 });
 
 export const loginSchema = Joi.object({

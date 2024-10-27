@@ -4,16 +4,16 @@ import { registerSchema, loginSchema } from '../validations/auth.validator';
 
 class AuthController {
     public async register(req: Request, res: Response): Promise<void> {
-        const { name, lastName, email, password, phone, address } = req.body;
+        const { name, lastName, email, password, phone, address, role } = req.body;
 
-        const { error } = registerSchema.validate({ name, lastName, email, password, phone, address });
+        const { error } = registerSchema.validate({ name, lastName, email, password, phone, address, role });
         if (error) {
             res.status(400).json({ message: error.message });
             return;
         }
 
         try {
-            const newUser = await AuthService.register(name, lastName, email, password, phone, address);
+            const newUser = await AuthService.register(name, lastName, email, password, phone, address, role);
             res.status(201).json({ message: 'User registered successfully', user: newUser });
         } catch (error) {
             res.status(500).json(error instanceof Error ? { message: error.message } : { message: 'Unknown error' });

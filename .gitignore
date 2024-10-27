@@ -29,3 +29,6 @@ Thumbs.db
 
 # Diğer
 coverage/
+
+# Firebase service account key
+serviceAccountKey.json
