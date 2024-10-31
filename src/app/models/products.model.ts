@@ -5,6 +5,9 @@ export interface IProduct {
   description: string;
   price: number;
   stock: number;
+  categories: string[];
+  sizes: string[];
+  colors: string[];
   images: string[];
   isActive: boolean;
 }
@@ -25,6 +28,18 @@ const productsSchema = new mongoose.Schema<IProduct>({
   stock: {
     type: Number,
     required: true,
+  },
+  categories: {
+    type: [String],
+    required: true
+  },
+  sizes: {
+    type: [String],
+    required: true
+  },
+  colors: {
+    type: [String],
+    required: true
   },
   images: {
     type: [String],

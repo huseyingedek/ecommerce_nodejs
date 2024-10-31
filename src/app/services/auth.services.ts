@@ -53,6 +53,17 @@ class AuthService {
         return { accessToken, refreshToken, accessTokenExpiresAt, user };
     }
 
+    public async validateAdmin(email: string, password: string): Promise<any> {
+        const user = await UserModel.findOne({ email, role: 'admin' });
+        if (user && await user.comparePassword(password)) {
+            const { token: accessToken, expiresAt: accessTokenExpiresAt } = generateAccessToken(user._id);
+            const refreshToken = generateRefreshToken(user._id);
+
+            return { accessToken, refreshToken, accessTokenExpiresAt, user };
+        }
+        return null;
+    }
+
     public async refreshAccessTokenService(refreshToken: string): Promise<string | null> {
         try {
             const savedToken = await RefreshTokenModel.findOne({ token: refreshToken });
