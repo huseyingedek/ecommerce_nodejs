@@ -44,11 +44,19 @@ class ProductService {
 
   public async updateProduct(productId: string, updateData: Partial<IProduct>): Promise<IProduct | null> {
     try {
-      if (updateData.images) {
-        const imageUrls = await this.uploadImages(updateData.images);
-        updateData.images = imageUrls;
+      let product = await ProductModel.findById(productId);
+      if (!product) {
+        return null;
       }
-      const product = await ProductModel.findByIdAndUpdate(productId, updateData, { new: true });
+
+      if (updateData.images && updateData.images.length > 0) {
+        const newImageUrls = await this.uploadImages(updateData.images);
+        updateData.images = [...product.images, ...newImageUrls];
+      } else {
+        updateData.images = product.images;
+      }
+
+      product = await ProductModel.findByIdAndUpdate(productId, updateData, { new: true });
       return product;
     } catch (error) {
       if (error instanceof Error) {
@@ -85,6 +93,28 @@ class ProductService {
     }
     return imageUrls;
   }
+
+  public async deleteImage(productId: string, fileName: string): Promise<void> {
+    if (!fileName) {
+      throw new Error('No file name provided');
+    }
+  
+    try {
+      const filePath = `products/${fileName}`;
+      const file = bucket.file(filePath);
+      await file.delete();
+  
+      const product = await ProductModel.findById(productId);
+      if (product) {
+        product.images = product.images.filter(image => image !== `https://storage.googleapis.com/e-commerce-1a832.appspot.com/${filePath}`);
+        await product.save();
+      }
+    } catch (error) {
+      throw new Error('Error deleting image: ' + (error as Error).message);
+    }
+  }
+  
+
 }
 
 export default new ProductService();

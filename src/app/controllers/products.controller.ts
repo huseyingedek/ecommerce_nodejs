@@ -58,6 +58,26 @@ class ProductController {
       res.status(500).json({ message: 'Error deleting product', error: (error as Error).message });
     }
   }
+
+  public async deleteImage(req: Request, res: Response): Promise<void> {
+    const productId = req.params.id;
+    const fileName = req.params.fileName;
+  
+    if (!fileName) {
+      res.status(400).json({ message: 'No file name provided' });
+      return;
+    }
+  
+    try {
+      await ProductService.deleteImage(productId, fileName);
+      res.status(200).json({ message: 'Image deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting image', error: (error as Error).message });
+    }
+  }
+  
+  
+  
 }
 
 export default new ProductController();
