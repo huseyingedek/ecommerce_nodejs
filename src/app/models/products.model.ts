@@ -19,7 +19,6 @@ const productsSchema = new mongoose.Schema<IProduct>({
   },
   description: {
     type: String,
-    required: true,
   },
   price: {
     type: Number,
@@ -35,11 +34,9 @@ const productsSchema = new mongoose.Schema<IProduct>({
   },
   sizes: {
     type: [String],
-    required: true
   },
   colors: {
     type: [String],
-    required: true
   },
   images: {
     type: [String],

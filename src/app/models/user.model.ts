@@ -38,7 +38,6 @@ const UserSchema: Schema = new Schema<IUser>({
   },
   address: { 
     type: String,
-    required: false,
   },
   role: {
     type: String,
