@@ -4,16 +4,17 @@ import bucket from '../../config/firebase';
 class ProductService {
   public async getProducts(): Promise<IProduct[]> {
     try {
-      const products = await ProductModel.find();
-      return products;
+      const activeProducts = await ProductModel.find({ isActive: true });
+      return activeProducts;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error('Error fetching products: ' + error.message);
+        throw new Error('Error fetching active products: ' + error.message);
       } else {
-        throw new Error('Unknown error fetching products');
+        throw new Error('Unknown error fetching active products');
       }
     }
   }
+
 
   public async getProductById(productId: string): Promise<IProduct | null> {
     try {
@@ -98,12 +99,12 @@ class ProductService {
     if (!fileName) {
       throw new Error('No file name provided');
     }
-  
+
     try {
       const filePath = `products/${fileName}`;
       const file = bucket.file(filePath);
       await file.delete();
-  
+
       const product = await ProductModel.findById(productId);
       if (product) {
         product.images = product.images.filter(image => image !== `https://storage.googleapis.com/e-commerce-1a832.appspot.com/${filePath}`);
@@ -113,7 +114,7 @@ class ProductService {
       throw new Error('Error deleting image: ' + (error as Error).message);
     }
   }
-  
+
 
 }
 
